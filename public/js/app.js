@@ -1927,6 +1927,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
+    this.seeders();
+  },
+  data: function data() {
+    return {};
+  },
+  methods: {
+    seeders: function seeders() {
+      var url = 'api/seeders';
+      axios.get(url).then(function (res) {
+        console.log(res);
+      })["catch"](function (err) {
+        console.error(err);
+      });
+    }
   }
 });
 

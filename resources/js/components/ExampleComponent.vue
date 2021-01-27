@@ -17,7 +17,26 @@
 <script>
     export default {
         mounted() {
-            console.log('Component mounted.')
-        }
+            console.log('Component mounted.');
+            this.seeders();
+        },
+        data() {
+            return {
+
+            }
+        },
+        methods: {
+            seeders() {
+                const url = 'api/seeders'
+
+                axios.get(url)
+                .then(res => {
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.error(err);
+                })
+            }
+        },
     }
 </script>
