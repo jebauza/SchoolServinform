@@ -27,7 +27,7 @@
         },
         methods: {
             seeders() {
-                const url = 'api/seeders'
+                const url = 'api/students'
 
                 axios.get(url)
                 .then(res => {

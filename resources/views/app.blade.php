@@ -6,12 +6,9 @@
 <body class="antialiased">
     <div id="app" class="container-fluid" style="margin-top: 30px">
 
-        {{-- <App basepath="{{route('web.basepath')}}"></App> --}}
-
-        <example-component></example-component>
+        <App basepath="{{route('web.basepath')}}"></App>
 
     </div>
-    <!-- ./wrapper -->
 
     @include('sections.script')
 

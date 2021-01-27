@@ -14,5 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    return redirect('home');
+})->name('web.basepath');
+
+
+Route::get('/{optional?}', function ($optional) {
     return view('app');
-});
+})->where('optional', '.*');

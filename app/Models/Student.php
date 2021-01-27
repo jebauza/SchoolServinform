@@ -11,6 +11,24 @@ class Student extends Model
 
     protected $fillable = ['name', 'surnames'];
 
+    // Scopes
+    public function scopeName($query, $name)
+    {
+        if($name){
+            return $query->where('name', 'like', "%$name%")
+                            ->orWhere('surnames', 'like', "%$name%");
+        }
+    }
+
+    public function scopeCourse($query, $course = null)
+    {
+        if($course){
+            return $query->whereHas('courses', function (Builder $query) use($course){
+                $query->name($course);
+            });
+        }
+    }
+
     // Relations
     public function courses()
     {

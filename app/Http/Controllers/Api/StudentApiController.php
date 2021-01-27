@@ -2,22 +2,48 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StudentRequest;
+use App\Http\Resources\StudentResource;
 
 class StudentApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $student = Student::orderBy('name')->get();
+        $students = Student::name($request->name)
+                ->course($request->course)
+                ->with('courses')
+                ->orderBy('name')
+                ->get();
 
-        return $student;
+        StudentResource::withoutWrapping();
+        return StudentResource::collection($students);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function paginate(Request $request)
+    {
+        $students = Student::name($request->name)
+                ->course($request->course)
+                ->with('courses')
+                ->orderBy('name')
+                ->paginate();
+
+        return StudentResource::collection($students);
     }
 
     /**
@@ -26,9 +52,28 @@ class StudentApiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StudentRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $newStudent = new Student($request->all());
+            $newStudent->save();
+
+            DB::commit();
+            return response()->json([
+                'ok' => true,
+                'message'=>'Save successfully',
+                'student'=> new StudentResource($newStudent)
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'ok' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -39,7 +84,14 @@ class StudentApiController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!$student = Student::find($id)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Not found'
+            ], 404);
+        }
+
+        return new StudentResource($student);
     }
 
     /**
@@ -49,9 +101,32 @@ class StudentApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StudentRequest $request, $id)
     {
-        //
+        if (!$student = Student::find($id)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Not found'
+            ], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $student->fill($request->all());
+            $student->save();
+
+            DB::commit();
+            return response()->json([
+                'ok' => true,
+                'message'=>'Save successfully',
+                'student'=> new StudentResource($student)
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -62,6 +137,19 @@ class StudentApiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!$student = Student::find($id)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Not found'
+            ], 404);
+        }
+
+        $student->delete();
+
+        return response()->json([
+            'ok' => true,
+            'message'=>'Save successfully',
+            'student'=> new StudentResource($student)
+        ]);
     }
 }
