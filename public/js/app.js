@@ -2075,17 +2075,412 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
   mounted: function mounted() {
+    var _this = this;
+
     EventBus.$on('coursesLoad', function () {
       console.log('coursesLoad');
+
+      _this.getStudents();
+
+      _this.getCourses();
     });
+  },
+  created: function created() {
+    this.getStudents();
+    this.getCourses();
+  },
+  watch: {
+    'filters.name': function filtersName(newValue, oldValue) {
+      this.getCourses();
+    },
+    'filters.student': function filtersStudent(newValue, oldValue) {
+      this.getCourses();
+    }
+  },
+  data: function data() {
+    return {
+      courses: [],
+      students: [],
+      filters: {
+        name: '',
+        student: ''
+      },
+      modalType: 'add',
+      form: {
+        name: '',
+        students: [],
+        id: ''
+      },
+      errors: {}
+    };
+  },
+  methods: {
+    getCourses: function getCourses() {
+      var _this2 = this;
+
+      var url = "/api/courses";
+      var loading = this.$vs.loading({
+        type: 'points',
+        color: 'blue',
+        // background: '#7a76cb',
+        text: 'Loading...'
+      });
+      axios.get(url, {
+        params: this.filters
+      }).then(function (res) {
+        _this2.courses = res.data;
+        loading.close();
+
+        _this2.getStudents();
+      })["catch"](function (err) {
+        loading.close();
+        console.error(err);
+      });
+    },
+    getStudents: function getStudents() {
+      var _this3 = this;
+
+      var url = "api/students";
+      axios.get(url).then(function (res) {
+        _this3.students = res.data;
+      });
+    },
+    clearFilters: function clearFilters() {
+      this.filters = {
+        name: '',
+        student: ''
+      };
+    },
+    showForm: function showForm(action) {
+      var course = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (this.modalType != action) {
+        this.clearForm();
+      }
+
+      this.modalType = action;
+
+      if (this.modalType === 'edit' && course) {
+        this.form = {
+          name: course.name,
+          students: course.students,
+          id: course.id
+        };
+      }
+
+      this.erros = {};
+      $('#modalCourseFormAddEdit').modal('show');
+    },
+    clearForm: function clearForm() {
+      this.form = {
+        name: '',
+        students: [],
+        id: ''
+      };
+      this.errors = {};
+    },
+    actionStoreUpdate: function actionStoreUpdate() {
+      if (this.modalType == 'add') {
+        this.store();
+      } else if (this.modalType == 'edit') {
+        this.update();
+      }
+    },
+    store: function store() {
+      var _this4 = this;
+
+      var url = 'api/courses/store';
+      var loading = this.$vs.loading({
+        type: 'points',
+        color: 'blue',
+        // background: '#7a76cb',
+        text: 'Saving...'
+      });
+      axios.post(url, {
+        name: this.form.name,
+        students: this.form.students.map(function (item) {
+          return item.id;
+        })
+      }).then(function (res) {
+        loading.close();
+        Swal.fire({
+          title: res.data.nessage,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+        _this4.getCourses();
+
+        $('#modalCourseFormAddEdit').modal('hide');
+
+        _this4.clearForm();
+      })["catch"](function (err) {
+        loading.close();
+
+        if (err.response && err.response.status == 422) {
+          _this4.errors = err.response.data.errors;
+
+          _this4.errorsStudents();
+        } else if (err.response.data.message) {
+          Swal.fire({
+            title: 'Error!',
+            text: err.response.data.message,
+            icon: "error",
+            showCloseButton: true,
+            closeButtonColor: 'red'
+          });
+        }
+
+        console.log(err.response);
+      });
+    },
+    update: function update() {
+      var _this5 = this;
+
+      var url = "api/courses/".concat(this.form.id, "/update");
+      var loading = this.$vs.loading({
+        type: 'points',
+        color: 'blue',
+        // background: '#7a76cb',
+        text: 'Saving...'
+      });
+      axios.put(url, {
+        name: this.form.name,
+        students: this.form.students.map(function (item) {
+          return item.id;
+        })
+      }).then(function (res) {
+        loading.close();
+        Swal.fire({
+          title: res.data.message,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false
+        });
+        $('#modalCourseFormAddEdit').modal('hide');
+
+        _this5.clearForm();
+
+        _this5.getCourses();
+      })["catch"](function (err) {
+        loading.close();
+
+        if (err.response && err.response.status == 422) {
+          _this5.errors = err.response.data.errors;
+
+          _this5.errorsStudents();
+        } else if (err.response.data.message) {
+          Swal.fire({
+            title: 'Error!',
+            text: err.response.data.message,
+            icon: "error",
+            showCloseButton: true,
+            closeButtonColor: 'red'
+          });
+        }
+
+        console.log(err.response);
+      });
+    },
+    destroy: function destroy(course) {
+      var _this6 = this;
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to remove (".concat(course.name, ")?"),
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          var url = "api/courses/".concat(course.id, "/destroy");
+
+          var loading = _this6.$vs.loading({
+            type: 'points',
+            color: 'blue',
+            // background: '#7a76cb',
+            text: 'Deleting...'
+          });
+
+          axios["delete"](url).then(function (res) {
+            loading.close();
+            Swal.fire({
+              title: res.data.message,
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false
+            });
+
+            _this6.getCourses();
+          })["catch"](function (err) {
+            loading.close();
+
+            if (err.response.data.message) {
+              Swal.fire({
+                title: 'Error!',
+                text: err.response.data.message,
+                icon: "error",
+                showCloseButton: true,
+                closeButtonColor: 'red'
+              });
+            }
+
+            console.log(err.response);
+          });
+        }
+      });
+    },
+    errorsStudents: function errorsStudents() {
+      if (Object.keys(this.errors).length !== 0) {
+        if (!this.errors.students) {
+          for (var i = 0; i < this.students.length; i++) {
+            if (this.errors.hasOwnProperty("students.".concat(i))) {
+              this.errors.students = this.errors["students.".concat(i)];
+              break;
+            }
+          }
+        }
+      }
+    }
+  },
+  filters: {
+    studentsText: function studentsText(value) {
+      if (!value) return '';
+      return value.map(function (s) {
+        return s.fullName;
+      }).join(', ');
+    }
   }
 });
 
@@ -2314,6 +2709,8 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         _this2.students = res.data;
         loading.close();
+
+        _this2.getCourses();
       })["catch"](function (err) {
         loading.close();
         console.error(err);
@@ -42644,9 +43041,388 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n      Courses\n")])
+  return _c("div", { staticClass: "card border-primary mb-4" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title text-primary font-weight-bold" }, [
+        _vm._v("Courses")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-tools float-right" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-info btn-sm",
+            on: {
+              click: function($event) {
+                return _vm.showForm("add")
+              }
+            }
+          },
+          [
+            _c("i", { staticClass: "fas fa-plus-square text-white" }, [
+              _vm._v(" New Course")
+            ])
+          ]
+        )
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "form-row" }, [
+        _c("div", { staticClass: "col-sm-5 form-group" }, [
+          _c("label", [_vm._v("Name")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filters.name,
+                expression: "filters.name"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", name: "name", placeholder: "Name" },
+            domProps: { value: _vm.filters.name },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.filters, "name", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-5 form-group" }, [
+          _c("label", [_vm._v("Student")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filters.student,
+                expression: "filters.student"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", name: "student", placeholder: "Student" },
+            domProps: { value: _vm.filters.student },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.filters, "student", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-auto mt-4 pt-2" }, [
+          _c(
+            "button",
+            {
+              staticClass:
+                "btn waves-effect waves-light btn-danger float-right",
+              attrs: { title: "Remove filters", type: "button" },
+              on: {
+                click: function($event) {
+                  return _vm.clearFilters()
+                }
+              }
+            },
+            [_c("i", { staticClass: "fas fa-filter" })]
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "row table-responsive" }, [
+        _vm.courses.length
+          ? _c("table", { staticClass: "table table-striped" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.courses, function(course) {
+                  return _c("tr", { key: course.id }, [
+                    _c("td", [_vm._v(_vm._s(course.name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(_vm._f("studentsText")(course.students)))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", { staticClass: "text-nowrap text-center" }, [
+                      _c("div", [
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "btn m-r-10 waves-effect waves-light btn-outline-primary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.showForm("edit", course)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fas fa-pencil-alt" })]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "btn waves-effect waves-light btn-outline-danger",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.destroy(course)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fas fa-trash" })]
+                        )
+                      ])
+                    ])
+                  ])
+                }),
+                0
+              )
+            ])
+          : _vm._e()
+      ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "modalCourseFormAddEdit",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _vm.modalType == "add"
+                  ? _c("h4", { staticClass: "modal-title" }, [
+                      _vm._v("New Course")
+                    ])
+                  : _c("h4", { staticClass: "modal-title" }, [
+                      _vm._v("Edit Course")
+                    ]),
+                _vm._v(" "),
+                _vm._m(1)
+              ]),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  staticClass: "needs-validation",
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.actionStoreUpdate($event)
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "modal-body" }, [
+                    _c("div", { staticClass: "form-row" }, [
+                      _c("div", { staticClass: "form-group col-12" }, [
+                        _c(
+                          "label",
+                          {
+                            class: [
+                              "control-label",
+                              _vm.errors.name ? "text-danger" : ""
+                            ],
+                            attrs: { for: "name" }
+                          },
+                          [_vm._v("Name")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.name,
+                              expression: "form.name"
+                            }
+                          ],
+                          class: [
+                            "form-control",
+                            _vm.errors.name ? "is-invalid" : ""
+                          ],
+                          attrs: {
+                            type: "text",
+                            name: "name",
+                            placeholder: "Name",
+                            required: ""
+                          },
+                          domProps: { value: _vm.form.name },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(_vm.form, "name", $event.target.value)
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.name
+                          ? _c(
+                              "small",
+                              {
+                                staticClass: "form-control-feedback text-danger"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                    " +
+                                    _vm._s(_vm.errors.name[0]) +
+                                    "\n                                "
+                                )
+                              ]
+                            )
+                          : _vm._e()
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "form-group col-12" },
+                        [
+                          _c(
+                            "label",
+                            {
+                              class: [
+                                "control-label",
+                                _vm.errors.students ? "text-danger" : ""
+                              ],
+                              attrs: { for: "students" }
+                            },
+                            [_vm._v("Students")]
+                          ),
+                          _vm._v(" "),
+                          _c("multiselect", {
+                            attrs: {
+                              options: _vm.students,
+                              placeholder: "Students",
+                              label: "name",
+                              "track-by": "id",
+                              multiple: true,
+                              "close-on-select": false,
+                              "clear-on-select": false,
+                              "preserve-search": true
+                            },
+                            model: {
+                              value: _vm.form.students,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "students", $$v)
+                              },
+                              expression: "form.students"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.students
+                            ? _c(
+                                "small",
+                                {
+                                  staticClass:
+                                    "form-control-feedback text-danger"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(_vm.errors.students[0]) +
+                                      "\n                                "
+                                  )
+                                ]
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ]
+              )
+            ])
+          ]
+        )
+      ]
+    )
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "bg-info" }, [
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Students")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "text-nowrap text-center" }, [
+          _c("span", [_vm._v("Actions")])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer justify-content-between" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Save")]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -42800,7 +43576,7 @@ var render = function() {
             {
               staticClass:
                 "btn waves-effect waves-light btn-danger float-right",
-              attrs: { title: "Eliminar Filtros", type: "button" },
+              attrs: { title: "remove filters", type: "button" },
               on: {
                 click: function($event) {
                   return _vm.clearFilters()
@@ -43063,7 +43839,7 @@ var render = function() {
                           _c("multiselect", {
                             attrs: {
                               options: _vm.courses,
-                              placeholder: "Ingredientes",
+                              placeholder: "Courses",
                               label: "name",
                               "track-by": "id",
                               multiple: true,
@@ -43123,7 +43899,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Courses")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Actions")])
+        _c("th", { staticClass: "text-nowrap text-center" }, [
+          _c("span", [_vm._v("Actions")])
+        ])
       ])
     ])
   },
@@ -85421,7 +86199,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CoursesComponent_vue_vue_type_template_id_9ce2cce2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CoursesComponent.vue?vue&type=template&id=9ce2cce2& */ "./resources/js/components/modules/courses/CoursesComponent.vue?vue&type=template&id=9ce2cce2&");
 /* harmony import */ var _CoursesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CoursesComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/modules/courses/CoursesComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var vue_multiselect_dist_vue_multiselect_min_css_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-multiselect/dist/vue-multiselect.min.css?vue&type=style&index=0&lang=css& */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.css?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -85429,7 +86209,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _CoursesComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _CoursesComponent_vue_vue_type_template_id_9ce2cce2___WEBPACK_IMPORTED_MODULE_0__["render"],
   _CoursesComponent_vue_vue_type_template_id_9ce2cce2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],

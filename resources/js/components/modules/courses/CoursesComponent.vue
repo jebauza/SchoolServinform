@@ -34,14 +34,14 @@
                         <tr class="bg-info">
                             <th>Name</th>
                             <th>Students</th>
-                            <th>Actions</th>
+                            <th class="text-nowrap text-center"><span>Actions</span></th>
                         </tr>
                     </thead>
                     <tbody>
 
                         <tr v-for="course in courses" :key="course.id">
                             <td>{{course.name}}</td>
-                            <td>{{course.students.map(s => s.fullname).join(', ')}}</td>
+                            <td>{{course.students | studentsText}}</td>
                             <td class="text-nowrap text-center">
                                 <div>
                                     <button type="button" @click="showForm('edit', course)"
@@ -188,7 +188,7 @@ export default {
 
             axios.get(url)
             .then(res => {
-                this.courses = res.data;
+                this.students = res.data;
             });
         },
         clearFilters() {
@@ -207,7 +207,7 @@ export default {
                 this.form = {
                     name: course.name,
                     students: course.students,
-                    id: student.id
+                    id: course.id
                 }
             }
             this.erros = {};
@@ -312,7 +312,7 @@ export default {
                 console.log(err.response);
             });
         },
-        destroy(student) {
+        destroy(course) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: `Do you want to remove (${course.name})?`,
@@ -372,6 +372,13 @@ export default {
             }
         }
     },
+    filters: {
+        studentsText(value) {
+            if (!value) return '';
+
+            return value.map(s => s.fullName).join(', ');
+        }
+    }
 
 }
 </script>

@@ -37,7 +37,7 @@
                         <tr class="bg-info">
                             <th>Name</th>
                             <th>Courses</th>
-                            <th>Actions</th>
+                            <th class="text-nowrap text-center"><span>Actions</span></th>
                         </tr>
                     </thead>
                     <tbody>
