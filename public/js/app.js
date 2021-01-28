@@ -2501,7 +2501,66 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  created: function created() {
+    this.getEvents();
+  },
+  data: function data() {
+    return {
+      events: []
+    };
+  },
+  methods: {
+    getEvents: function getEvents() {
+      var _this = this;
+
+      var url = "/api/events";
+      var loading = this.$vs.loading({
+        type: 'points',
+        color: 'blue',
+        // background: '#7a76cb',
+        text: 'Loading...'
+      });
+      axios.get(url).then(function (res) {
+        _this.events = res.data;
+        loading.close();
+      })["catch"](function (err) {
+        loading.close();
+        console.error(err);
+      });
+    }
+  }
+});
 
 /***/ }),
 
@@ -43002,7 +43061,7 @@ var render = function() {
             staticClass: "btn btn-primary mx-1",
             attrs: { to: { path: "events" }, role: "button" }
           },
-          [_vm._v("Events")]
+          [_vm._v("Events API")]
         )
       ],
       1
@@ -43444,9 +43503,73 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n      Events\n")])
+  return _c("div", { staticClass: "card border-primary mb-4" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "row table-responsive" }, [
+        _vm.events.length
+          ? _c("table", { staticClass: "table table-striped" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.events, function(event, index) {
+                  return _c("tr", { key: index }, [
+                    _c("td", [
+                      _c(
+                        "a",
+                        { attrs: { href: event.sameAs, target: "_blank" } },
+                        [_vm._v(_vm._s(event.title))]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", {
+                      domProps: { innerHTML: _vm._s(event.description) }
+                    }),
+                    _vm._v(" "),
+                    _c("td", { staticClass: "w-25" }, [
+                      _c("img", {
+                        staticClass: "img-fluid img-thumbnail",
+                        attrs: { src: event.image, alt: event.title }
+                      })
+                    ])
+                  ])
+                }),
+                0
+              )
+            ])
+          : _vm._e()
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title text-primary font-weight-bold" }, [
+        _vm._v("Events API")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "bg-info" }, [
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Description")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Image")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 

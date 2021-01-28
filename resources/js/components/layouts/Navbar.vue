@@ -4,7 +4,7 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <router-link :to="{path: 'students'}" role="button" class="btn btn-primary mx-1">Students</router-link>
             <router-link :to="{path: 'courses'}" role="button" class="btn btn-primary mx-1">Courses</router-link>
-            <router-link :to="{path: 'events'}" role="button" class="btn btn-primary mx-1">Events</router-link>
+            <router-link :to="{path: 'events'}" role="button" class="btn btn-primary mx-1">Events API</router-link>
         </div>
         <button type="button" class="btn btn-success btn-sm float-right" @click="loadData">Load data</button>
     </div>

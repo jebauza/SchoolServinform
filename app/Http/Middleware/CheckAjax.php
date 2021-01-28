@@ -19,7 +19,6 @@ class CheckAjax
             return $next($request);
         }
 
-        dd('algo pasa ajax');
-        //return redirect('/');
+        return redirect('/');
     }
 }
