@@ -11,6 +11,10 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.styles(['resources/vendor/css/schoolservinform.css'], 'public/css/template.css')
+mix.styles([
+        'resources/vendor/fontawesome/css/all.min.css',
+        'resources/vendor/css/schoolservinform.css',
+    ], 'public/css/template.css')
     .js('resources/js/app.js', 'public/js') //JQuery, Bootstrap, VueJS
-    .scripts(['resources/vendor/js/template.js'], 'public/js/template.js');
+    .scripts(['resources/vendor/js/template.js'], 'public/js/template.js')
+    .copy('resources/vendor/fontawesome/webfonts', 'public/webfonts');

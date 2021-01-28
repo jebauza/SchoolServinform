@@ -19,7 +19,8 @@ class StudentResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'surnames' => $this->surnames,
-            'courses' => CourseResource::collection($this->courses),
+            'fullName' => $this->fullName,
+            'courses' => $this->courses,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

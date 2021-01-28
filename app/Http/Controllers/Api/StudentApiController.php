@@ -20,7 +20,7 @@ class StudentApiController extends Controller
     public function index(Request $request)
     {
         $students = Student::name($request->name)
-                ->course($request->course)
+                ->courseId($request->course)
                 ->with('courses')
                 ->orderBy('name')
                 ->get();
@@ -58,7 +58,9 @@ class StudentApiController extends Controller
             DB::beginTransaction();
 
             $newStudent = new Student($request->all());
-            $newStudent->save();
+            if ($newStudent->save()) {
+                $newStudent->courses()->attach($request->courses);
+            }
 
             DB::commit();
             return response()->json([
@@ -114,7 +116,9 @@ class StudentApiController extends Controller
             DB::beginTransaction();
 
             $student->fill($request->all());
-            $student->save();
+            if ($student->save()) {
+                $student->courses()->sync($request->courses);
+            }
 
             DB::commit();
             return response()->json([

@@ -17,7 +17,7 @@ export default {
     props: ['basepath'],
     mounted() {
         console.log('Component mounted.');
-        this.seeders();
+        //this.seeders();
     },
     data() {
         return {

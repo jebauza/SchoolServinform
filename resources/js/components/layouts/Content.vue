@@ -1,11 +1,11 @@
 <template>
 
     <div class="card-body">
-        <!-- <transition name="slide-fade" mode="out-in">
+        <transition name="slide-fade" mode="out-in">
 
             <router-view></router-view>
 
-        </transition> -->
+        </transition>
     </div>
 
 </template>

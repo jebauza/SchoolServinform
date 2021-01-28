@@ -4,12 +4,21 @@ namespace App\Models;
 
 use App\Models\Course;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Student extends Model
 {
     protected $table = 'students';
 
     protected $fillable = ['name', 'surnames'];
+
+    protected $appends = ['fullName'];
+
+    //Attributes
+    function getFullNameAttribute()
+    {
+        return $this->name .' '. $this->surnames;
+    }
 
     // Scopes
     public function scopeName($query, $name)
@@ -20,7 +29,16 @@ class Student extends Model
         }
     }
 
-    public function scopeCourse($query, $course = null)
+    public function scopeCourseId($query, $course = null)
+    {
+        if($course){
+            return $query->whereHas('courses', function (Builder $query) use($course){
+                $query->where('courses.id', $course);
+            });
+        }
+    }
+
+    public function scopeCourseName($query, $course = null)
     {
         if($course){
             return $query->whereHas('courses', function (Builder $query) use($course){
