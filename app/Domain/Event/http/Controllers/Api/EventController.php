@@ -1,12 +1,11 @@
 <?php
+namespace Domain\Event\http\Controllers\Api;
 
-namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 
-class EventApiController extends Controller
+class EventController extends Controller
 {
     /**
      * Display a listing of the resource.

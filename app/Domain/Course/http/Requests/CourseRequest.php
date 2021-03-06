@@ -1,6 +1,6 @@
 <?php
+namespace Domain\Course\http\Requests;
 
-namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +26,7 @@ class CourseRequest extends FormRequest
         $course_id = $this->route('id') ?? null;
         return [
             'name' => 'required|string|max:100',
-            'students' => 'bail|required|array',
+            'students' => 'bail|array',
             'students.*' => 'integer|exists:students,id'
         ];
     }

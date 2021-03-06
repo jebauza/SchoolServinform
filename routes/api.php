@@ -21,28 +21,28 @@ use Illuminate\Support\Facades\Artisan;
 Route::middleware(['ajax'])->name('api.')->group(function () {
 
     /* Students */
-    Route::prefix('students')->name('students.')->group(function () {
-        Route::get('/', 'Api\StudentApiController@index')->name('index');
-        Route::get('/paginate', 'Api\StudentApiController@paginate')->name('paginate');
-        Route::post('/store', 'Api\StudentApiController@store')->name('store');
-        Route::get('/{id}/show', 'Api\StudentApiController@show')->name('show');
-        Route::put('/{id}/update', 'Api\StudentApiController@update')->name('update');
-        Route::delete('/{id}/destroy', 'Api\StudentApiController@destroy')->name('destroy');
+    Route::namespace('Domain\Student\http\Controllers')->prefix('students')->name('students.')->group(function () {
+        Route::get('/', 'Api\StudentController@index')->name('index');
+        Route::get('/paginate', 'Api\StudentController@paginate')->name('paginate');
+        Route::post('/store', 'Api\StudentController@store')->name('store');
+        Route::get('/{id}/show', 'Api\StudentController@show')->name('show');
+        Route::put('/{id}/update', 'Api\StudentController@update')->name('update');
+        Route::delete('/{id}/destroy', 'Api\StudentController@destroy')->name('destroy');
     });
 
     /* Courses */
-    Route::prefix('courses')->name('courses.')->group(function () {
-        Route::get('/', 'Api\CourseApiController@index')->name('index');
-        Route::get('/paginate', 'Api\CourseApiController@paginate')->name('paginate');
-        Route::post('/store', 'Api\CourseApiController@store')->name('store');
-        Route::get('/{id}/show', 'Api\CourseApiController@show')->name('show');
-        Route::put('/{id}/update', 'Api\CourseApiController@update')->name('update');
-        Route::delete('/{id}/destroy', 'Api\CourseApiController@destroy')->name('destroy');
+    Route::namespace('Domain\Course\http\Controllers')->prefix('courses')->name('courses.')->group(function () {
+        Route::get('/', 'Api\CourseController@index')->name('index');
+        Route::get('/paginate', 'Api\CourseController@paginate')->name('paginate');
+        Route::post('/store', 'Api\CourseController@store')->name('store');
+        Route::get('/{id}/show', 'Api\CourseController@show')->name('show');
+        Route::put('/{id}/update', 'Api\CourseController@update')->name('update');
+        Route::delete('/{id}/destroy', 'Api\CourseController@destroy')->name('destroy');
     });
 
     /* Events */
-    Route::prefix('events')->name('events.')->group(function () {
-        Route::get('/', 'Api\EventApiController@index')->name('index');
+    Route::namespace('Domain\Event\http\Controllers')->prefix('events')->name('events.')->group(function () {
+        Route::get('/', 'Api\EventController@index')->name('index');
     });
 
     /* Seeders */

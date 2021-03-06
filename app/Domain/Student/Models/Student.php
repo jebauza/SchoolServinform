@@ -1,8 +1,9 @@
 <?php
+namespace Domain\Student\Models;
 
-namespace App\Models;
 
-use App\Models\Course;
+
+use Domain\Course\Models\Course;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 

@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Http\Requests;
+namespace Domain\Student\http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,7 +26,7 @@ class StudentRequest extends FormRequest
         return [
             'name' => 'required|string|max:100',
             'surnames' => 'required|string|max:255',
-            'courses' => 'bail|required|array',
+            'courses' => 'bail|array',
             'courses.*' => 'integer|exists:courses,id'
         ];
     }

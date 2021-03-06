@@ -2,8 +2,9 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\Student;
+
 use Faker\Generator as Faker;
+use Domain\Student\Models\Student;
 
 $factory->define(Student::class, function (Faker $faker) {
     return [

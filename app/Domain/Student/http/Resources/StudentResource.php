@@ -1,8 +1,7 @@
 <?php
+namespace Domain\Student\http\Resources;
 
-namespace App\Http\Resources;
 
-use App\Http\Resources\CourseResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StudentResource extends JsonResource
